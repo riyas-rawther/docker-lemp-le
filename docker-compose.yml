@@ -32,9 +32,44 @@
       - ./www/:/var/www #so whatever folder we create in ./www folder is available at /var/www on the container
       - ./nginx/conf.d/:/etc/nginx/conf.d/ #nginx configuration folder.
       - ./certbot/conf:/etc/nginx/ssl
-      - ./certbot/data:/var/www/certbot
       - ./logs:/var/log/
-    command: mkdir -pv /var/log/nginx/ && touch /var/log/nginx/error.log && touch /var/log/nginx/access.log
+    command: mkdir -pv /var/log/nginx/ && mkdir /var/www/certbot && mkdir /var/www/${domain} && touch /var/log/nginx/error.log && touch /var/log/nginx/access.log
     networks:
       - app-network
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+
+#certbot for SSL
+  certbot:
+        image: certbot/certbot:latest
+        command: certonly --webroot --webroot-path=/var/www/certbot --email riyas@realtech.dev --agree-tos --no-eff-email -d lemp.realtech.dev
+        volumes:
+            - ./certbot/conf:/etc/letsencrypt
+            - ./certbot/logs:/var/log/letsencrypt
+            - ./certbot/data:/var/www/certbot
+        entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+#MySQL Service
+  db:
+    image: mysql:5.7.22
+    container_name: db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: riyasrawther
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - ./dbdata:/var/lib/mysql/
+      - ./mysql/my.cnf:/etc/mysql/my.cnf:ro
+    networks:
+      - app-network
+#Docker Networks
+ networks:
+  app-network:
+    driver: bridge
+#Volumes
+ volumes:
+  dbdata:
+  db-data:
