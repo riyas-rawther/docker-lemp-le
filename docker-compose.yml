@@ -62,7 +62,7 @@
       SERVICE_NAME: mysql
     volumes:
       - ./dbdata:/var/lib/mysql/
-      - ./mysql/my.cnf:/etc/mysql/my.cnf:ro
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
     networks:
       - app-network
 #Docker Networks
