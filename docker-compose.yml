@@ -1,0 +1,40 @@
+ version: '3'
+ services:
+
+  #PHP Service
+  app:
+    image: docker.io/bitnami/php-fpm:7.4-debian-10
+    container_name: app 
+    restart: always
+    tty: true
+    ports:
+      - 9000:9000
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+      - ./www/:/var/www
+      - ./php/local.ini:/opt/bitnami/php/etc/conf.d/local.ini #if you need any custom php.ini customizations
+      - ./logs:/var/log/
+    networks:
+      - app-network
+  #Nginx Service
+  webserver:
+    image: nginx:latest
+    container_name: webserver
+    restart: always
+    tty: true
+    ports:
+      - "${webPort}:80" #this will be fetched from the .env file
+      - "443:443"
+    volumes:
+      - ./www/:/var/www #so whatever folder we create in ./www folder is available at /var/www on the container
+      - ./nginx/conf.d/:/etc/nginx/conf.d/ #nginx configuration folder.
+      - ./certbot/conf:/etc/nginx/ssl
+      - ./certbot/data:/var/www/certbot
+      - ./logs:/var/log/
+    command: mkdir -pv /var/log/nginx/ && touch /var/log/nginx/error.log && touch /var/log/nginx/access.log
+    networks:
+      - app-network
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
