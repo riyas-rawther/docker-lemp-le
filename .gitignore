@@ -1,3 +1,4 @@
 .env
 ./data/mysql/database/
 ./data/mysql/logs/
+./data/certbot/
