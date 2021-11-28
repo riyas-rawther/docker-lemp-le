@@ -1,0 +1,79 @@
+version: '3.7'
+networks:
+    LEMP:
+
+services:
+  nginx:
+    image: nginx:latest
+    restart: unless-stopped
+    volumes:
+      - ./data/nginx:/etc/nginx/conf.d
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+      - ./www:/var/www/
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - LEMP
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+
+#CertBot
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - LEMP
+
+#PHP Service
+  app:
+    image: docker.io/bitnami/php-fpm:7.4-debian-10
+    container_name: app 
+    restart: always
+    tty: true
+    ports:
+      - 9000:9000
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+      - ./www/:/var/www
+      - ./data/php/local.ini:/opt/bitnami/php/etc/conf.d/local.ini #if you need any custom php.ini customizations
+      - ./logs:/var/log/
+    networks:
+      - LEMP
+
+  mariaDB:
+      image: mariadb:latest
+      container_name: LEMP_mariaDB
+      volumes:
+            - ./data/mysql/database:/var/lib/mysql:rw
+            - ./data/mysql/mysql/my.cnf:/etc/mysql/my.cnf
+      ports:
+            - "3306:3306"
+      depends_on:
+            - nginx
+      environment:
+            - MYSQL_ROOT_PASSWORD=654321          
+      networks:
+            - LEMP 
+
+#phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_ARBITRARY: 1
+    depends_on:
+      - mariaDB
+      - nginx
+    networks:
+      - LEMP
+
