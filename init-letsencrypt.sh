@@ -24,8 +24,23 @@ read NEW_EMAIL
 sed -i 's/'example.com'/'$NEW_DOMAIN_NAME'/g' ./data/nginx/default.conf
 
 #rename root folder
-
 mv ./www/example.com ./www/$NEW_DOMAIN_NAME
+
+#generating strong passwords for MariDB
+MYSQL_ROOT_PASSWORD=$(date +%s|sha256sum|base64|head -c 36) #openssl rand -hex >
+SQL_PASSWORD=$(date +%s+%m|sha256sum|base64|head -c 16) #openssl rand -hex 12
+sed -i 's/'rootpass'/'$MYSQL_ROOT_PASSWORD'/g' ./data/mysql/mariadb.env
+sed -i 's/'sqlpass'/'$SQL_PASSWORD'/g' ./data/mysql/mariadb.env
+
+#generating DB name and username
+
+DATABASE=db_${$NEW_DOMAIN_NAME//.}
+USER=user_${$NEW_DOMAIN_NAME//.}
+
+sed -i 's/'db'/'$DATABASE'/g' ./data/mysql/mariadb.env
+sed -i 's/'mysqluser'/'$USER'/g' ./data/mysql/mariadb.env
+
+
 
 domains=$NEW_DOMAIN_NAME
 rsa_key_size=4096

@@ -57,13 +57,15 @@ services:
       container_name: ${DOMAIN_NAME}_mariaDB
       volumes:
             - ./data/mysql/database:/var/lib/mysql:rw
-#            - ./data/mysql/mysql/my.cnf:/etc/mysql/my.cnf
+            - ./data/mysql/mysql/my.cnf:/etc/mysql/my.cnf
       ports:
             - "3306:3306"
       depends_on:
             - nginx
-      environment:
-            - MYSQL_ROOT_PASSWORD=654321          
+      env_file:
+      - ./data/mysql/mariadb.env
+#      environment:
+#            - MYSQL_ROOT_PASSWORD=654321          
       networks:
             - LEMP 
 
