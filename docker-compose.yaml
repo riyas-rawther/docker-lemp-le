@@ -5,13 +5,15 @@ networks:
 services:
   nginx:
     container_name: ${DOMAIN_NAME}_nginx
-    image: nginx:latest
+    image: nginx:1.19-alpine
     restart: unless-stopped
     volumes:
       - ./data/nginx:/etc/nginx/conf.d
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
       - ./www:/var/www/
+    environment:
+      DOMAIN_NAME: ${DOMAIN_NAME}
     ports:
       - "80:80"
       - "443:443"
