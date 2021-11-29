@@ -1,6 +1,6 @@
 version: '3.7'
 networks:
-    LEMP:
+    LEMP_NW_{DOMAIN_NAME}:
 
 services:
   nginx:
