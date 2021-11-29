@@ -20,6 +20,13 @@ read NEW_EMAIL
             echo COMPOSE_CONVERT_WINDOWS_PATHS=1
         )>.env
 
+# replace NGINX configuration file with Domain_Name
+sed -i 's/'example.com'/'$NEW_DOMAIN_NAME'/g' ./data/nginx/default.conf
+
+#rename root folder
+
+mv ./www/example.com ./www/$NEW_DOMAIN_NAME
+
 domains=$NEW_DOMAIN_NAME
 rsa_key_size=4096
 data_path="./data/certbot"
