@@ -27,19 +27,18 @@ sed -i 's/'example.com'/'$NEW_DOMAIN_NAME'/g' ./data/nginx/default.conf
 mv ./www/example.com ./www/$NEW_DOMAIN_NAME
 
 #generating strong passwords for MariDB
+echo "### Generating strong password for MysQL, users based on domain name and adding to the environment variable"
 MYSQL_ROOT_PASSWORD=$(date +%s|sha256sum|base64|head -c 36) #openssl rand -hex >
 SQL_PASSWORD=$(date +%s+%m|sha256sum|base64|head -c 16) #openssl rand -hex 12
 sed -i 's/'rootpass'/'$MYSQL_ROOT_PASSWORD'/g' ./data/mysql/mariadb.env
 sed -i 's/'sqlpass'/'$SQL_PASSWORD'/g' ./data/mysql/mariadb.env
 
-#generating DB name and username
+#generating DB name and username and removing dots from domain name
 
-DATABASE=db_${$NEW_DOMAIN_NAME//.}
-USER=user_${$NEW_DOMAIN_NAME//.}
-
-sed -i 's/'db'/'$DATABASE'/g' ./data/mysql/mariadb.env
-sed -i 's/'mysqluser'/'$USER'/g' ./data/mysql/mariadb.env
-
+DATABASE="${NEW_DOMAIN_NAME//.}"
+sed -i 's/'REPLACEDB'/'$DATABASE'/g' ./data/mysql/mariadb.env
+sed -i 's/'REPLACEUSER'/'$DATABASE'/g' ./data/mysql/mariadb.env
+echo "### done"
 
 
 domains=$NEW_DOMAIN_NAME
