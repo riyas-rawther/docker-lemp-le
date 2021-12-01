@@ -1,6 +1,6 @@
 version: '3.7'
 networks:
-    LEMP_NW_${DOMAIN_NAME}:
+    LEMP-NW-DOMAIN_NAME:
 
 services:
   nginx:
@@ -18,7 +18,7 @@ services:
       - "80:80"
       - "443:443"
     networks:
-      - LEMP_NW_${DOMAIN_NAME}
+      - LEMP-NW-DOMAIN_NAME
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 
 #CertBot
@@ -31,7 +31,7 @@ services:
       - ./data/certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
     networks:
-      - LEMP_NW_${DOMAIN_NAME}
+      - LEMP-NW-DOMAIN_NAME
 
 #PHP Service
   app:
@@ -50,7 +50,7 @@ services:
       - ./data/php/local.ini:/opt/bitnami/php/etc/conf.d/local.ini #if you need any custom php.ini customizations
       - ./logs:/var/log/
     networks:
-      - LEMP_NW_${DOMAIN_NAME}
+      - LEMP-NW-DOMAIN_NAME
 
   mariaDB:
       image: mariadb:10.2
@@ -67,7 +67,7 @@ services:
 #      environment:
 #            - MYSQL_ROOT_PASSWORD=654321          
       networks:
-            - LEMP_NW_${DOMAIN_NAME}
+            - LEMP-NW-DOMAIN_NAME
 
 #phpMyAdmin
   phpmyadmin:
@@ -81,5 +81,5 @@ services:
       - mariaDB
       - nginx
     networks:
-      - LEMP_NW_${DOMAIN_NAME}
+      - LEMP-NW-DOMAIN_NAME
 
