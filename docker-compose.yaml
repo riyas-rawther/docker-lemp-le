@@ -4,7 +4,7 @@ networks:
 
 services:
   nginx:
-    container_name: ${DOMAIN_NAME}_nginx
+    container_name: ${DOMAIN_NAME}-nginx
     image: nginx:1.19-alpine
     restart: unless-stopped
     volumes:
@@ -23,7 +23,7 @@ services:
 
 #CertBot
   certbot:
-    container_name: ${DOMAIN_NAME}_certbot
+    container_name: ${DOMAIN_NAME}-certbot
     image: certbot/certbot
     restart: unless-stopped
     volumes:
@@ -36,7 +36,7 @@ services:
 #PHP Service
   app:
     image: docker.io/bitnami/php-fpm:7.4-debian-10
-    container_name: ${DOMAIN_NAME}_app 
+    container_name: ${DOMAIN_NAME}-app 
     restart: always
     tty: true
     ports:
@@ -54,7 +54,7 @@ services:
 
   mariaDB:
       image: mariadb:10.2
-      container_name: ${DOMAIN_NAME}_mariaDB
+      container_name: ${DOMAIN_NAME}-mariaDB
       volumes:
             - ./data/mysql/database:/var/lib/mysql:rw
             - ./data/mysql/mysql/my.cnf:/etc/mysql/my.cnf
@@ -72,7 +72,7 @@ services:
 #phpMyAdmin
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: ${DOMAIN_NAME}_phpmyadmin
+    container_name: ${DOMAIN_NAME}-phpmyadmin
     ports:
       - "8080:80"
     environment:
