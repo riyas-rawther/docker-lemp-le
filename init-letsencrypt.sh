@@ -14,7 +14,7 @@ read NEW_EMAIL
 # Generate new ENV file.
         (
             echo # Don't delete this file if you want to run configuration script again.
-            echo DOMAIN_NAME=${NEW_DOMAIN_NAME//.}
+            echo DOMAIN_NAME=$NEW_DOMAIN_NAME
             echo HTTP_PORT=80
             echo EMAIL=$NEW_EMAIL
             echo COMPOSE_CONVERT_WINDOWS_PATHS=1
