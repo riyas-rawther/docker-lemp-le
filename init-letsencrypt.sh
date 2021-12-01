@@ -32,6 +32,7 @@ MYSQL_ROOT_PASSWORD=$(date +%s|sha256sum|base64|head -c 36) #openssl rand -hex >
 SQL_PASSWORD=$(date +%s+%m|sha256sum|base64|head -c 16) #openssl rand -hex 12
 sed -i 's/'rootpass'/'$MYSQL_ROOT_PASSWORD'/g' ./data/mysql/mariadb.env
 sed -i 's/'sqlpass'/'$SQL_PASSWORD'/g' ./data/mysql/mariadb.env
+sed -i 's/'DOMAIN_NAME'/'$${NEW_DOMAIN_NAME//.}'/g' ./docker-compose.yaml
 
 #generating DB name and username and removing dots from domain name
 
