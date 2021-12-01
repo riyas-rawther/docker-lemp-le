@@ -26,13 +26,16 @@ sed -i 's/'example.com'/'$NEW_DOMAIN_NAME'/g' ./data/nginx/default.conf
 #rename root folder
 mv ./www/example.com ./www/$NEW_DOMAIN_NAME
 
+#create dynamic network name on docker-compose
+sed -i 's/'DOMAIN_NAME'/'${NEW_DOMAIN_NAME//.}'/g' ./docker-compose.yaml
+
 #generating strong passwords for MariDB
 echo "### Generating strong password for MysQL, users based on domain name and adding to the environment variable"
 MYSQL_ROOT_PASSWORD=$(date +%s|sha256sum|base64|head -c 36) #openssl rand -hex >
 SQL_PASSWORD=$(date +%s+%m|sha256sum|base64|head -c 16) #openssl rand -hex 12
 sed -i 's/'rootpass'/'$MYSQL_ROOT_PASSWORD'/g' ./data/mysql/mariadb.env
 sed -i 's/'sqlpass'/'$SQL_PASSWORD'/g' ./data/mysql/mariadb.env
-sed -i 's/'DOMAIN_NAME'/'$${NEW_DOMAIN_NAME//.}'/g' ./docker-compose.yaml
+
 
 #generating DB name and username and removing dots from domain name
 
