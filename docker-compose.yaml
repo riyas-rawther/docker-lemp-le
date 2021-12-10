@@ -37,24 +37,6 @@ services:
     networks:
       - LEMP-NW-DOMAIN_NAME
 
-#PHP Service
-  app:
-    image: docker.io/bitnami/php-fpm:7.4-debian-10
-    container_name: DOMAIN_NAME-app 
-    restart: always
-    tty: true
-    ports:
-      - 9000:9000
-    environment:
-      SERVICE_NAME: app
-      SERVICE_TAGS: dev
-    working_dir: /var/www
-    volumes:
-      - ./www/:/var/www
-      - ./data/php/local.ini:/opt/bitnami/php/etc/conf.d/local.ini #if you need any custom php.ini customizations
-      - ./logs:/var/log/
-    networks:
-      - LEMP-NW-DOMAIN_NAME
 
   mysql:
       image: mysql:latest
