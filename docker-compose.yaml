@@ -2,32 +2,38 @@ version: '3.7'
 networks:
     LEMP-NW-DOMAIN_NAME:
 
-services:
-  nginx:
-    container_name: DOMAIN_NAME-nginx
-    image: nginx:1.19-alpine
-    restart: unless-stopped
-    volumes:
-      - ./data/nginx:/etc/nginx/conf.d
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
-      - ./www:/var/www/
-    ports:
-      - "80:80"
-      - "443:443"
-    networks:
-      - LEMP-NW-DOMAIN_NAME
-    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 
-#CertBot
-  certbot:
-    container_name: DOMAIN_NAME-certbot
-    image: certbot/certbot
-    restart: unless-stopped
+
+#SFTPgo
+
+  sftpgo:
+    image: "drakkan/sftpgo:v2-alpine"
+    # default user id
+    user: "1026"
+    restart: always
+    expose:
+      # HTTP
+      - "8080"
+      # HTTPS
+      - "443"
+      # WebDav
+      - "5007"
+    environment:
+      # These are the settings to access your db
+      SFTPGO_WEBDAVD__BINDINGS__0__PORT: 5007
+      SFTPGO_DATA_PROVIDER__DRIVER: "mysql"
+      SFTPGO_DATA_PROVIDER__NAME: "sftpgo"
+      SFTPGO_DATA_PROVIDER__HOST: "mariaDB"
+      SFTPGO_DATA_PROVIDER__PORT: 3306
+      SFTPGO_DATA_PROVIDER__USERNAME: "sftp-user"
+      SFTPGO_DATA_PROVIDER__PASSWORD: "my_cool_secret"
+      SFTPGO_COMMON_DEFENDER__ENABLED: "true"
+      SFTPGO_COMMON_DEFENDER__BAN_TIME: 15
+      SFTPGO_COMMON_DEFENDER__BAN_TIME_INCREMENT: 100
+      SFTPGO_COMMON_DEFENDER__THRESHOLD: 5
+      SFTPGO_COMMON_DEFENDER__OBSERVATION_TIME: 15
     volumes:
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+      - ./:/srv/sftpgo
     networks:
       - LEMP-NW-DOMAIN_NAME
 
@@ -62,8 +68,11 @@ services:
             - nginx
       env_file:
       - ./data/mysql/mariadb.env
-#      environment:
-#            - MYSQL_ROOT_PASSWORD=654321          
+      environment:
+            - MYSQL_ROOT_PASSWORD=654321
+            - MARIADB_USER=sftp-user
+            - MARIADB_PASSWORD=my_cool_secret
+            - MARIADB_DATABASE: "sftpgo" 
       networks:
             - LEMP-NW-DOMAIN_NAME
 
