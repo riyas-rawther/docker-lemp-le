@@ -64,10 +64,8 @@ services:
             - ./data/mysql/mysql/my.cnf:/etc/mysql/my.cnf
       ports:
             - "3306:3306"
-      depends_on:
-            - nginx
-      env_file:
-      - ./data/mysql/mariadb.env
+#      env_file:
+#      - ./data/mysql/mariadb.env
       environment:
             - MYSQL_ROOT_PASSWORD=654321
             - MARIADB_USER=sftp-user
@@ -86,7 +84,6 @@ services:
       PMA_ARBITRARY: 1
     depends_on:
       - mariaDB
-      - nginx
     networks:
       - LEMP-NW-DOMAIN_NAME
 
