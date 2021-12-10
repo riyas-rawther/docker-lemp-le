@@ -2,7 +2,7 @@ version: '3.7'
 networks:
     LEMP-NW-DOMAIN_NAME:
 
-
+services:
 
 #SFTPgo
 
