@@ -23,7 +23,7 @@ services:
       SFTPGO_WEBDAVD__BINDINGS__0__PORT: 5007
       SFTPGO_DATA_PROVIDER__DRIVER: "mysql"
       SFTPGO_DATA_PROVIDER__NAME: "sftpgo"
-      SFTPGO_DATA_PROVIDER__HOST: "mariaDB"
+      SFTPGO_DATA_PROVIDER__HOST: "mysql"
       SFTPGO_DATA_PROVIDER__PORT: 3306
       SFTPGO_DATA_PROVIDER__USERNAME: "sftp-user"
       SFTPGO_DATA_PROVIDER__PASSWORD: "my_cool_secret"
@@ -56,9 +56,10 @@ services:
     networks:
       - LEMP-NW-DOMAIN_NAME
 
-  mariaDB:
-      image: mariadb:10.2
-      container_name: DOMAIN_NAME-mariaDB
+  mysql:
+      image: mysql:latest
+      restart: always
+      container_name: DOMAIN_NAME-mysql
       volumes:
             - ./data/mysql/database:/var/lib/mysql:rw
             - ./data/mysql/mysql/my.cnf:/etc/mysql/my.cnf
@@ -67,10 +68,10 @@ services:
 #      env_file:
 #      - ./data/mysql/mariadb.env
       environment:
-            - MYSQL_ROOT_PASSWORD=654321
-            - MARIADB_USER=sftp-user
-            - MARIADB_PASSWORD=my_cool_secret
-            - MARIADB_DATABASE=sftpgo
+            MYSQL_DATABASE: "sftpgo"
+            MYSQL_USER: "sftp-user"
+            MYSQL_PASSWORD: "my_cool_secret"
+            MYSQL_ROOT_PASSWORD: "my_cool_secret_root"
       networks:
             - LEMP-NW-DOMAIN_NAME
 
