@@ -84,7 +84,7 @@ services:
     environment:
       PMA_ARBITRARY: 1
     depends_on:
-      - mariaDB
+      - mysql
     networks:
       - LEMP-NW-DOMAIN_NAME
 
