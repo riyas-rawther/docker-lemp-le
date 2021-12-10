@@ -72,7 +72,7 @@ services:
             - MYSQL_ROOT_PASSWORD=654321
             - MARIADB_USER=sftp-user
             - MARIADB_PASSWORD=my_cool_secret
-            - MARIADB_DATABASE: "sftpgo" 
+            - MARIADB_DATABASE=sftpgo
       networks:
             - LEMP-NW-DOMAIN_NAME
 
