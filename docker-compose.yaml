@@ -43,8 +43,7 @@ services:
       restart: always
       container_name: DOMAIN_NAME-mysql
       volumes:
-            - ./data/mysql/database:/var/lib/mysql:rw
-            - ./data/mysql/mysql/my.cnf:/etc/mysql/my.cnf
+            - ./database:/var/lib/mysql
       ports:
             - "3306:3306"
 #      env_file:
