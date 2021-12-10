@@ -13,7 +13,7 @@ services:
     restart: always
     expose:
       # HTTP
-      - "8080"
+      - "8081"
       # HTTPS
       - "443"
       # WebDav
